@@ -3,6 +3,8 @@ import numpy as np
 import pandas as pd
 import heapq
 from PIL import Image
+import tkinter as tk
+from tkinter import messagebox
 
 # ExcelファイルからStartとGoalの座標を取得する関数
 def read_coordinates_from_excel(file_path):
@@ -112,6 +114,13 @@ for i in range(len(coordinates) - 1):
         # 出発点とゴール点を描画
         cv2.circle(color_image, (start[1], start[0]), 10, (0, 255, 0), -1)  # 緑色の点
         cv2.circle(color_image, (goal[1], goal[0]), 10, (0, 255, 0), -1)  # 緑色の点
+
+    else:
+        # 最短経路が見つからなかった場合、メッセージボックスで警告
+        root = tk.Tk()
+        root.withdraw()  # ウィンドウを表示せずにメッセージボックスのみ表示
+        messagebox.showerror("エラー", f"最短経路の算出に失敗しました\nStart: {start} -> Goal: {goal}")
+        root.destroy()
 
 # 結果の画像をリサイズして表示する
 resized_image = cv2.resize(color_image, (1000, 1000))  # 画像を1000x1000にリサイズ（必要に応じて調整）
