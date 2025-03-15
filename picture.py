@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 
 # 画像を読み込む
-image = Image.open('テスト1.png')
+image = Image.open('test_source.png')
 
 # グレースケールに変換
 gray_image = image.convert('L')
