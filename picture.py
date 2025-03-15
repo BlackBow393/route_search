@@ -1,4 +1,6 @@
 from PIL import Image
+import cv2
+import numpy as np
 
 # 画像を読み込む
 image = Image.open('テスト1.png')
@@ -20,8 +22,17 @@ else:
 # リサイズ
 resized_image = gray_image.resize((new_width, new_height))
 
-# リサイズ後の画像を保存
-resized_image.save('resized_grayscale_image.jpg')
+# リサイズ後の画像をNumPy配列に変換（OpenCV用）
+opencv_image = np.array(resized_image)
+
+# 二値化処理（閾値を127に設定）
+ret, binary_image = cv2.threshold(opencv_image, 127, 255, cv2.THRESH_BINARY)
+
+# 二値化された画像をPIL形式に変換
+binary_pil_image = Image.fromarray(binary_image)
+
+# 二値化後の画像を保存
+binary_pil_image.save('test.jpg')
 
 # 画像を表示
-resized_image.show()
+binary_pil_image.show()
