@@ -1,9 +1,17 @@
+# 必要なライブラリのインポート
+# OpenCV: 画像処理に使用
 import cv2
+# NumPy: 配列操作に使用
 import numpy as np
+# pandas: Excelファイルの読み込みに使用
 import pandas as pd
+# heapq: A*アルゴリズムの実装に使用
 import heapq
+# PIL: 画像の読み込みと変換に使用
 from PIL import Image
+# tkinter: メッセージボックスに使用
 import tkinter as tk
+# messagebox: エラーメッセージの表示に使用
 from tkinter import messagebox
 
 # ExcelファイルからStartとGoalの座標を取得する関数
@@ -109,11 +117,11 @@ for i in range(len(coordinates) - 1):
     if path:
         # 経路を描画
         for (y, x) in path:
-            cv2.circle(color_image, (x, y), 5, (0, 0, 255), -1)  # 赤い点で経路を描画
+            cv2.circle(color_image, (x, y), 5, (125, 125, 0), -1)  # 赤い点で経路を描画
 
         # 出発点とゴール点を描画
-        cv2.circle(color_image, (start[1], start[0]), 10, (0, 255, 0), -1)  # 緑色の点
-        cv2.circle(color_image, (goal[1], goal[0]), 10, (0, 255, 0), -1)  # 緑色の点
+        cv2.circle(color_image, (start[1], start[0]), 10, (255, 255, 0), -1)  # 緑色の点
+        cv2.circle(color_image, (goal[1], goal[0]), 10, (255, 255, 0), -1)  # 緑色の点
 
     else:
         # 最短経路が見つからなかった場合、メッセージボックスで警告
@@ -122,14 +130,16 @@ for i in range(len(coordinates) - 1):
         messagebox.showerror("エラー", f"最短経路の算出に失敗しました\nStart: {start} -> Goal: {goal}")
         root.destroy()
 
+# 色を反転する
+inverted_image = cv2.bitwise_not(color_image)
+
 # 結果の画像をリサイズして表示する
-resized_image = cv2.resize(color_image, (1000, 1000))  # 画像を1000x1000にリサイズ（必要に応じて調整）
+resized_image = cv2.resize(inverted_image, (1920, 1080))  # 画像を1000x1000にリサイズ（必要に応じて調整）
 
 # 結果の画像を表示
-cv2.imshow('All Shortest Paths', resized_image)
+cv2.imshow('All Shortest Paths (Inverted)', resized_image)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
 
 # 結果の画像を保存
-cv2.imwrite("all_shortest_paths_result.jpg", resized_image)
-
+cv2.imwrite("all_shortest_paths_result_inverted.jpg", resized_image)
