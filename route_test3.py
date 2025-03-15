@@ -1,22 +1,24 @@
 import cv2
 import numpy as np
-from PIL import Image
-import heapq
 import pandas as pd
+import heapq
+from PIL import Image
 
-# ExcelからStartとGoalの座標を読み込む関数
-def read_coordinates_from_excel(file_path, sheet_name="通過地点表"):
-    # Excelファイルを読み込む
-    df = pd.read_excel(file_path, sheet_name=sheet_name)
-
-    # StartとGoalの座標を取得
-    start_row = df[df['分類'] == 'Start']
-    goal_row = df[df['分類'] == 'Goal']
-
-    # StartとGoalの座標を抽出
-    start = (start_row['Y座標'].values[0], start_row['X座標'].values[0])  # (Y, X)
-    goal = (goal_row['Y座標'].values[0], goal_row['X座標'].values[0])  # (Y, X)
-
+# ExcelファイルからStartとGoalの座標を取得する関数
+def read_coordinates_from_excel(file_path):
+    # Excelファイルを読み込み、シート名とテーブルを指定
+    df = pd.read_excel(file_path, sheet_name="通過地点表", header=0)  # header=0 は最初の行を列名として読み込む
+    
+    # 最初の行をStart地点として取得
+    start_y = df.iloc[0]['Y座標']  # 最初の行のY座標列を取得
+    start_x = df.iloc[0]['X座標']  # 最初の行のX座標列を取得
+    start = (start_y, start_x)
+    
+    # 最後の行をGoal地点として取得
+    goal_y = df.iloc[-1]['Y座標']  # 最後の行のY座標列を取得
+    goal_x = df.iloc[-1]['X座標']  # 最後の行のX座標列を取得
+    goal = (goal_y, goal_x)
+    
     return start, goal
 
 # 画像を読み込む
@@ -28,7 +30,7 @@ gray_image = image.convert('L')
 # 画像のサイズを取得
 width, height = gray_image.size
 
-# リサイズして計算しやすいようにする（オプション）
+# 画像をNumPy配列に変換（OpenCV用）
 opencv_image = np.array(gray_image)
 
 # 二値化処理（白い領域を障害物として扱う）
@@ -92,8 +94,11 @@ def astar(start, goal, grid):
 
     return None  # ゴールに到達できない場合
 
-# ExcelファイルからStartとGoalの座標を取得
+# ExcelからStartとGoalを取得
 start, goal = read_coordinates_from_excel('通過地点表.xlsx')
+
+print("Start地点:", start)
+print("Goal地点:", goal)
 
 # A*アルゴリズムで最短経路を探索
 path = astar(start, goal, grid)
@@ -111,11 +116,6 @@ if path:
     cv2.circle(color_image, (start[1], start[0]), 10, (0, 255, 0), -1)  # 緑色の点
     cv2.circle(color_image, (goal[1], goal[0]), 10, (0, 255, 0), -1)  # 緑色の点
 
-    # 画像として保存
-    output_image_path = 'shortest_path_output.png'
-    cv2.imwrite(output_image_path, color_image)
-    print(f"画像が保存されました: {output_image_path}")
-
     # 結果の画像をリサイズして表示する
     resized_image = cv2.resize(color_image, (1000, 1000))  # 画像を1000x1000にリサイズ（必要に応じて調整）
     
@@ -123,6 +123,9 @@ if path:
     cv2.imshow('Shortest Path', resized_image)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
+
+    # 結果の画像を保存
+    cv2.imwrite("shortest_path_result.jpg", resized_image)
 
 else:
     print("Path not found")
