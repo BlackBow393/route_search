@@ -79,7 +79,8 @@ def astar(start, goal, grid):
 
 # 開始位置とゴール位置の設定
 start = (2400, 60)  # (Y, X)形式
-goal = (150, 3650)  # (Y, X)形式
+#goal = (150, 3650)  # (Y, X)形式
+goal = (300, 3670)  # (Y, X)形式
 
 # A*アルゴリズムで最短経路を探索
 path = astar(start, goal, grid)
